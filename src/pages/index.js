@@ -1,41 +1,22 @@
-import React, { useState, useEffect } from "react"
-import { graphql, useStaticQuery, Link, navigate } from "gatsby"
+import React, { useState, useContext } from "react"
+import { Link, navigate } from "gatsby"
 import "./index.scss"
 
 import Layout from "../components/layout"
 import Fluid200 from "../components/Fluid200"
 import SEO from "../components/seo"
+import { Store } from "../store"
 
 const IndexPage = () => {
+  const state = useContext(Store)
   const [lastTouchedItem, setLastTouchedItem] = useState(null)
-
-  // ポスターのシャッフル
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-  const shuffle = () => (mounted ? 1 : Math.random() - 0.5)
-
-  const { orgs } = useStaticQuery(graphql`
-    {
-      orgs: allShinkanWebOrg {
-        edges {
-          node {
-            posterImageUrls
-            name
-            primaryKey
-            activityType
-            activityIntroduce
-          }
-        }
-      }
-    }
-  `)
   return (
     <Layout>
       <SEO title="ホーム" />
 
       <div className="page--index">
         <ul className="org-list">
-          {orgs.edges.sort(shuffle).map(({ node: org }) => (
+          {state.edges.map(({ node: org }) => (
             <li className="org-list__item" key={org.primaryKey}>
               <Link to={`/org/${org.primaryKey}`}>
                 <figure className="org-list__item__poster">
